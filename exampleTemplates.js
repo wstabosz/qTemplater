@@ -8,10 +8,10 @@ templates.example = {
 		    + '  {tags[2]},\n'
 		    + '  {tags[3]}) \n'
 	        + 'VALUES \n'
-		    + ' ( {FirstName},\n'
-		    + '  {LastName},\n'
-		    + '  {Age},\n'
-		    + '  {FavoriteColor}){~n}{/rows}',
+		    + " ( '{FirstName}',\n"
+		    + "  '{LastName}',\n"
+		    + "  '{Age}',\n"
+		    + "  '{FavoriteColor}'){~n}{/rows}",
         data: [
 	        ["FirstName", "LastName", "Age", "FavoriteColor"],
 	        ["Arthur", "Dent", 42, "Yellow"],
