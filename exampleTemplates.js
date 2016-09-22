@@ -10,7 +10,7 @@ templates.example = {
 	        + 'VALUES \n'
 		    + " ( '{FirstName}',\n"
 		    + "  '{LastName}',\n"
-		    + "  '{Age}',\n"
+		    + "  {Age},\n"
 		    + "  '{FavoriteColor}'){~n}{/rows}",
         data: [
 	        ["FirstName", "LastName", "Age", "FavoriteColor"],
