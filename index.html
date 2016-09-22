@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>qTemplater</title>
+    <meta http-equiv="Content-Type" 
+          content="text/html; charset=utf-8" />
+	<link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.16/themes/base/jquery-ui.css" rel="Stylesheet" type="text/css" />
+    <link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.10/themes/south-street/jquery-ui.css" rel="Stylesheet" type="text/css" />
+	<link href="lib/css/jquery.handsontable.min.css" rel="Stylesheet" type="text/css" />
+	<link href="templater.css" rel="Stylesheet" type="text/css" /> 	
+	
+  </head>
+  <body >
+
+    <div id="importExportDialog" style="display: none">
+        <textarea id="importExportText"></textarea>
+    </div>
+
+	<div id="loadingBox">
+	</div>
+	
+	<div id="cursorBox" style="position: absolute; height: 20px; width: 20px; left: 10px; top: 10px; z-index:100;">
+	</div>
+	
+	<div id="centerBar" class="ui-layout-center">		
+		
+		<div class="ui-layout-center">
+			<div id="inputGridContainer" class="section">
+				<div class="sectionLabel" style="display: none;">Data</div>
+                <div id="dataPanelInfo" class="infoPanel">
+                    <div class="closeButton ui-icon ui-icon-close"></div>
+                    <h4>Data Panel</h4>
+                    Use this panel to enter your data to be
+                    bound to the template. The first row is used as the source of 
+                    the template tags. This row should contain column names, 
+                    not data. You can paste directly from Excel (and other programs) into the grid.
+                </div>
+				<div id="inputGrid" class="dataTable" style=""></div>                
+			</div>
+		</div>
+		
+		<div class="ui-layout-south" >
+		
+			<div id="infoContainer"  > <!-- start div#infoContainer -->
+				<div style="height: 75px">				
+					<h1 style="margin: 10px 1px 1px 1px; float:left;">qTemplater</h1>									
+				</div>
+				
+				<div id="tabs">
+					<ul>						
+						<li><a href="#templatesTab">Templates</a></li>
+						<li><a href="#aboutTab">About</a></li>						
+					</ul>
+					<!--<div id="instructionsTab">
+						<h3>Instructions</h3>
+						
+						<ol>
+							<li>In the Data panel, click the top-left-most grid cell, and paste your data.
+								<ol>
+								<li>The first row will be used as the header, which in turn are used as the template tags.</li>
+								<li>You can paste data directly from programs like Excel or SSMS.</li>
+								<li>You can also manually type in the data.</li>
+								</ol>
+							</li>
+							<li>Type your template into the Template panel. You can click the Template Tags to insert the tag into your template.</li>
+							<li>Your template will be rendered in the Results panel once you click away from the Template panel.</li>
+						</ol>
+							
+						The templating engine is <a href="http://akdubya.github.com/dustjs/">Dust</a>, the documentation can be found <a href="https://github.com/akdubya/dustjs/blob/master/docs/api.md">here</a>.
+																		
+						
+					</div>-->
+					<div id="templatesTab">
+						Double-click a template to load it into the Template panel.<br/><br/>
+						<select id="templateList" size="7" style="min-width: 23em;">
+							<optgroup label="Sample Templates">
+								<option>SQL Insert</option>
+								<option>SQL Update</option>
+							</optgroup>
+							<optgroup label="Saved Templates">
+							</optgroup>
+						</select>
+						<br/>
+						Name <input id="templateName" type="text" /><br/>
+
+						<button id="saveButton">Save</button>
+                        <button id="deleteButton">Delete</button>
+                        <button id="importButton">Import</button>
+                        <button id="exportButton">Export</button>
+                        <button id="exportAllButton">Export All</button>
+                        <br />
+                        <input type="checkbox" id="overwriteWarning" /><label for="overwriteWarning">Hide Overwrite Warnings</label>
+					</div>
+					
+					<div id="aboutTab">
+                        <h3>Author</h3>
+                        qTemplater was written by Walter Stabosz. The program originally
+                        started as a Windows application that I wrote because I needed an easy way to write batches
+                        of SQL INSERT statements that were more complex than what could be accomplished with 
+                        existing software. I thought about releasing it as a free download on our company website,
+                        but then I decided that a web application version of it would be easier to distribute,
+                        and it would make a good sales pitch for our company.
+
+						<h3>Plugins</h3>
+						The following jQuery plugins where used in the making of qTemplater.
+						<ul>
+							<li><a href="https://github.com/linkedin/dustjs">Dust</a> (linkedin fork) for the templating engine.</li>                            
+							<li><a href="http://warpech.github.com/jquery-handsontable/">jquery-handsontable</a> for the data grid.</li>                            							
+                            <li><a href="https://github.com/ssdel/jquery-inline-autocomplete">jquery-inline-autocomplete</a> for autocomplete in the template text panel.</li>
+                            <li><a href="http://layout.jquery-dev.net">jQuery UI Layout Plug-in</a> for the panel splitters.</li>
+						</ul>						
+						
+                        <h3>Known issues</h3>
+                        The autocomplete feature does not work in IE8 and below (and is a bit buggy in general).
+
+						<h3>Privacy</h3>
+						<ul>
+							<li>qTemplater is 100% client side code. Saved templates are stored locally on your computer. At no time is your data transmitted over the Internet.</li>														
+						</ul>
+												
+					</div>					
+					
+				</div>
+			</div> <!-- end div#infoContainer -->
+		</div>		 
+		
+	</div>
+	
+	<div id="rightBar" class="ui-layout-east">
+		<div class="ui-layout-center" >
+			<div id="templateSection" class="section">
+				<div class="sectionLabel" style="display: none;">Template</div>
+                <div id="templateInputPanelInfo" class="infoPanel">
+                    <div class="closeButton ui-icon ui-icon-close"></div>
+                    <h4>Template Text Panel</h4>
+                    Type your template text into this panel. Templae tags are
+                    obtained from the first row in your data grid. A template
+                    tag is written as <strong>{columnName}</strong>. You can
+                    render the tag/column name itself with <strong>{tags[0]}</strong>
+                    To render the template for each row in the grid, surround your template
+                    with inside the tags <strong>{#rows} {/rows}</strong>.
+                    This text area has autocomplete which will appear
+                    after you type a few letters of tag. You can force the autocomplete
+                    box to appear by typing Control+Spacebar.
+                </div>
+				<textarea id="templateInput"></textarea>
+			</div>
+		</div>
+		<div class="ui-layout-south" >
+			<div class="section">
+				<div class="sectionLabel">Result<br /><input id="htmlResult" type="checkbox" /><label for="htmlResult">HTML</label></div>
+				<textarea id="renderedOutput"></textarea>
+                <div id="htmlOutput"></div>
+			</div>
+		</div>
+	</div>
+	
+
+	<!-- end of page contents, start scripts -->
+	
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.8.20/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+
+	<script type="text/javascript" src="lib/js/dust-full.min.js"></script>
+
+	<!-- these 3 scripts are for the handsontable plugin (the Excel-like grid) -->	
+	<script type="text/javascript" src="lib/js/bootstrap-typeahead.js"></script>
+	<script type="text/javascript" src="lib/js/jquery.autoresize.js"></script>
+	<script type="text/javascript" src="lib/js/jquery.handsontable.min.js"></script>
+
+	
+	<script type="text/javascript" src="lib/js/jquery.caret.min.js"></script>	
+	<script type="text/javascript" src="lib/js/cursor_position.js"></script>	
+	
+	<script type="text/javascript" src="lib/js/jquery.layout.min.js"></script>
+
+	<script type="text/javascript" src="lib/js/jquery.inline-autocomplete.js"></script>	
+    <script type="text/javascript" src="lib/js/dialogUtil.js"></script>	
+        
+	<script type="text/javascript" src="templater.js"></script>
+    <script type="text/javascript" src="exampleTemplates.js"></script>    
+
+  </body>
+</html>
